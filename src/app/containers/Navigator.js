@@ -19,146 +19,122 @@
 // )(AppFooterContainer);
 
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, WebView } from 'react-native';
 import { Icon } from 'native-base';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { createMaterialTopTabNavigator, createStackNavigator } from 'react-navigation';
 
-import MapsScreen from '../components/plans/index.js';
+import MapsScreen from '../components/plans/index';
 import CreateScreen from '../components/create/index';
+import EventDescriptionScreen from '../components/create/event-description.component';
+
+
+var randomColor = require('randomcolor');
+var primaryColor = '#3F51B5'; //'#62B1F6'; //randomColor({luminosity: "bright", hue: 'blue'});
+
+//primaryColor = '#2cbddd'; //'#3F51B5'; //2cbddd #db8c5c #1f789e #3e71c9
 
 class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Home!</Text>
-      </View>
-    );
-  }
-}
+	render() {
+		console.log(primaryColor);
+		return (
+			<View>
+			<WebView
+			source={{uri: 'https://github.com/facebook/react-native'}}
+			style={{marginTop: 20}}
+		/>
+			</View>
 
-// var ModalNavigator = createMaterialBottomTabNavigator(
-// 	{
-// 		Create: { screen: CreateScreen, 
-// 			navigationOptions: {
-// 				title: 'Details',
-// 				tabBarIcon: () => (
-// 					<Icon name="add" style={{color: 'white'}} />
-// 				),
-// 				tabBarLabel: 'Создать'
-// 			} 
-// 		},
-// 		Maps: { screen: MapsScreen,
-// 			navigationOptions: {
-// 				tabBarIcon: () => (
-// 				  <Icon name="map"  style={{color: 'white'}} />
-// 				),
-// 				tabBarLabel: 'Маршруты'
-// 			}  
-// 		},
-// 		Home: { screen: HomeScreen, 
-// 			navigationOptions: {
-// 				tabBarIcon: (tintColor) => (
-// 				  <Icon name="home" style={{color: 'white'}} />
-// 				),
-// 				tabBarLabel: 'Главная'
-// 			}
-// 		}
-// 	},
-// 	{
-// 		initialRouteName: 'Home',
-// 		barStyle: { backgroundColor: '#3F51B5' },
-// 		// tabBarPosition: 'bottom',  for top
-// 		// swipeEnabled: false,
-// 		// showIcon: true  
-// 	}
-// 	);
-	
-	
-// export default StackNavigator({
-// 	MyTab: {
-// 		screen: ModalNavigator,
-// 		navigationOptions: { 
-// 			title: 'Header title',
-// 			headerStyle: {
-// 				backgroundColor: '#3F51B5',
-// 			},
-// 			headerTintColor: '#fff',
-// 		}
-//  }
-// })
+		);
+	}
+}
 
 var CreateScreenNavigator = createStackNavigator({
 	MyTab: {
 		screen: CreateScreen,
-		navigationOptions: { 
+		navigationOptions: {
 			title: 'Новое путешествие',
 			headerStyle: {
-				backgroundColor: '#3F51B5',
+				backgroundColor: primaryColor,
 			},
 			headerTintColor: '#fff',
 		}
- },
- EventsList: {
-	screen: MapsScreen,
-	navigationOptions: { 
-		title: 'Список мероприятий',
-		headerStyle: {
-			backgroundColor: '#3F51B5',
-		},
-		headerTintColor: '#fff',
-	}
- },
-})
+	},
+	EventsList: {
+		screen: MapsScreen,
+		navigationOptions: {
+			title: 'Список мероприятий',
+			headerStyle: {
+				backgroundColor: primaryColor,
+			},
+			headerTintColor: '#fff',
+		}
+	},
+	EventDescription: {
+		screen: EventDescriptionScreen,
+		navigationOptions: {
+			title: 'Описание мероприятия',
+			headerStyle: {
+				backgroundColor: primaryColor,
+			},
+			headerTintColor: '#fff',
+		}
+	},
+}, {
+		initialRouteName: 'MyTab'
+	})
 
 var MapsScreenNavigator = createStackNavigator({
 	MyTab: {
 		screen: MapsScreen,
-		navigationOptions: { 
+		navigationOptions: {
 			title: 'Мои путешествия',
 			headerStyle: {
-				backgroundColor: '#3F51B5',
+				backgroundColor: primaryColor,
 			},
 			headerTintColor: '#fff',
 		}
- }
+	}
 })
 
 var HomeScreenNavigator = createStackNavigator({
 	MyTab: {
 		screen: HomeScreen,
-		navigationOptions: { 
+		navigationOptions: {
 			title: 'Главная',
 			headerStyle: {
-				backgroundColor: '#3F51B5',
+				backgroundColor: primaryColor,
 			},
 			headerTintColor: '#fff',
 		}
-	 }
+	}
 })
 
-export default  ModalNavigator = createMaterialBottomTabNavigator(
+export default ModalNavigator = createMaterialBottomTabNavigator(
 	{
-		Create: { screen: CreateScreenNavigator, 
+		Create: {
+			screen: CreateScreenNavigator,
 			navigationOptions: {
 				tabBarIcon: () => (
-					<Icon name="add" style={{color: 'white'}} />
+					<Icon name="add" style={{ color: 'white' }} />
 				),
 				tabBarLabel: 'Создать'
-			} 
+			}
 		},
-		Maps: { screen: MapsScreenNavigator,
+		Maps: {
+			screen: MapsScreenNavigator,
 			navigationOptions: {
 				tabBarIcon: () => (
-				  <Icon name="map"  style={{color: 'white'}} />
+					<Icon name="map" style={{ color: 'white' }} />
 				),
 				tabBarLabel: 'Маршруты'
-			}  
+			}
 		},
-		Home: { screen: HomeScreenNavigator, 
+		Home: {
+			screen: HomeScreenNavigator,
 			navigationOptions: {
 				tabBarIcon: (tintColor) => (
-				  <Icon name="home" style={{color: 'white'}} />
+					<Icon name="home" style={{ color: 'white' }} />
 				),
 				tabBarLabel: 'Главная'
 			}
@@ -166,10 +142,10 @@ export default  ModalNavigator = createMaterialBottomTabNavigator(
 	},
 	{
 		initialRouteName: 'Create',
-		barStyle: { backgroundColor: '#3F51B5' },
+		barStyle: { backgroundColor: primaryColor },
 		// tabBarPosition: 'bottom',  for top
 		// swipeEnabled: false,
 		// showIcon: true  
 	}
-	);
+);
 
