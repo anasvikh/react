@@ -1,14 +1,16 @@
 import React from 'react';
 import { Keyboard } from 'react-native';
-import { Form, Item, Input, DatePicker, Text, Button, Title, Icon, Picker, View, Container, Header, Content } from 'native-base';
+import { Form, Item, Input, DatePicker, Text, Button, Title, Icon, Picker, View, Container, Header, Content, List, ListItem } from 'native-base';
+import randomColor from 'randomcolor';
 
 export default class CreateScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       events: [],
+      eventsFilter: {},
       isLoading: true,
-      locale: 'Тула',
+      locale: null,
       localeId: null,
       dateFrom: null,
       dateTo: null,
@@ -24,13 +26,40 @@ export default class CreateScreen extends React.Component {
       { id: 9, name: 'Творчество', icon: 'ios-cut', isChecked: false, tagId: '118,191' },
       { id: 10, name: 'Для детей', icon: 'md-happy', isChecked: false, tagId: '39' },
       { id: 11, name: 'Кино', icon: 'videocam', isChecked: false, tagId: '164' },
-      { id: 12, name: 'Фото', icon: 'images', isChecked: false, tagId: '50' },]
+      { id: 12, name: 'Фото', icon: 'images', isChecked: false, tagId: '50' },],
+      cities: []
     };
     this.setLocale = this.setLocale.bind(this);
     this.setDateFrom = this.setDateFrom.bind(this);
     this.setDateTo = this.setDateTo.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.getLocaleId = this.getLocaleId.bind(this);
+  }
+
+  addCity() {
+    console.log(this.state.cities);
+    this.setState({
+      cities: [...this.state.cities, '']
+    });
+  }
+
+  cityChange(value, index) {
+    this.state.cities[index] = value;
+    this.setState({
+      cities: this.state.cities
+    })
+  }
+
+  cityRemove(index) {
+    console.log('remove', index);
+    this.state.cities.splice(index, 1);
+    this.setState({
+      cities: this.state.cities
+    });
+  }
+
+  onNextClick() {
+    this.props.navigation.navigate('EventsList', { eventsFilter });
   }
 
   setLocale(value) {
@@ -72,45 +101,46 @@ export default class CreateScreen extends React.Component {
   }
 
   onSubmit() {
-    var tagsString = '';
-    this.state.tags.forEach(tag => {
-      if (tag.isChecked && tag.tagId) tagsString += tag.tagId + ',';
-    });
-    tagsString = tagsString.slice(0, -1);
-    const it = this;
-    url = 'https://all.culture.ru/api/2.2/events?status=accepted&start=' + this.state.dateFrom.getTime() + '&locales=' + this.state.localeId + '&end=' + this.state.dateTo.getTime();
-    if (tagsString) url += '&tags=' + tagsString;
-    fetch(url)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        it.setState({
-          events: result.events,
-          isLoading: false
-        });
-        it.props.navigation.navigate('EventsList', { events: it.state.events });
-      })
-      .catch(alert);
+    var localeId = this.state.localeId;
+    var dateFrom = this.state.dateFrom;
+    var dateTo = this.state.dateTo;
+    var tags = this.state.tags;
+    var eventsFilter = { localeId, dateFrom, dateTo, tags };
+    this.props.navigation.navigate('Map', { cities: this.state.cities });
   }
 
   render() {
-    var randomColor = require('randomcolor');
     currentDate = Date.now();
     return (
       <Container>
         <Content>
           <Form style={{ margin: 15 }}>
             <Text>Выберите место</Text>
-            <Item>
-              <Input
+            {/* <Item> */}
+            <List>
+              {this.state.cities && this.state.cities.map((city, index) => (
+                <ListItem key={index} style={{ height: 50 }}>
+                  <Input value={city} onChangeText={(e) => this.cityChange(e, index)}></Input>
+                  <Button transparent primary onPress={() => this.cityRemove(index)}>
+                    <Icon name='close'></Icon>
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+            {/* <Input
                 placeholder="город"
-                placeHolderStyle={{ color: "#d3d3d3" }}
+                placeholderTextColor="#d3d3d3"
                 onChangeText={this.setLocale}
                 onBlur={this.getLocaleId}
-              ></Input>
-            </Item>
-            <Text>Выберите время</Text>
+              ></Input> */}
+            <Button onPress={(e) => this.addCity(e)} style={{ alignSelf: 'center' }}>
+              <Text>Добавить город</Text>
+            </Button>
+            <Button onPress={(e) => this.onNextClick(e)} style={{ alignSelf: 'center' }}>
+              <Text>Продолжить</Text>
+            </Button>
+            {/* </Item> */}
+            {/* <Text>Выберите время</Text>
             <Item last>
               <DatePicker
                 primary
@@ -134,17 +164,17 @@ export default class CreateScreen extends React.Component {
             <Text>Расскажите о своих интересах</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' }}>
               {this.state.tags.map((tag) => (<View style={{ alignItems: 'center' }} key={tag.id}>
-                <Button rounded large
-                  style={{ width: 60, height: 60, margin: 5, justifyContent: 'center', backgroundColor: randomColor({ luminosity: 'bright', seed: tag.name }) }}
+                <Button rounded
+                  style={{ width: 60, height: 60, margin: 5, justifyContent: 'center', backgroundColor: '#ffffff', borderWidth: 2, borderColor: randomColor({ luminosity: 'light', seed: tag.name }) }}
                   onPress={this.setTag.bind(this, tag.id)}>
-                  <Icon name={tag.isChecked ? 'md-checkmark-circle' : tag.icon} style={{ fontSize: 30 }} />
+                  <Icon name={tag.isChecked ? 'md-checkmark-circle' : tag.icon} style={{ fontSize: 24, color: randomColor({ luminosity: 'bright', seed: tag.name }) }} />
                 </Button>
                 <Text style={{ fontSize: 12 }} >{tag.name}</Text>
               </View>))}
             </View>
             <Button onPress={this.onSubmit} style={{ alignSelf: 'center', marginTop: 10 }}>
               <Text>Поиск мероприятий</Text>
-            </Button>
+            </Button> */}
           </Form>
         </Content>
       </Container>)

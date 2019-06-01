@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Expo from "expo";
-import { Container, Content } from 'native-base';
+import { Container, Content, Button } from 'native-base';
 import { StyleSheet, Text, View } from 'react-native';
 import { Header } from 'native-base';
 import Navigator from './src/app/containers/Navigator';
@@ -8,6 +8,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './src/app/reducers';
 import { MODES } from './src/app/constants';
+import LoginScreen from "./src/app/components/login";
 
 const initialState = {
   mode: MODES.ARTICLES
@@ -19,7 +20,8 @@ export default class AwesomeApp extends Component {
   constructor() {
     super();
     this.state = {
-      isReady: false
+      isReady: false,
+      isAuthenticated: false
     };
   }
   async componentWillMount() {
@@ -34,6 +36,15 @@ export default class AwesomeApp extends Component {
     if (!this.state.isReady) {
       return <Expo.AppLoading />;
     }
+    if (this.state.isReady && !this.state.isAuthenticated) {
+      return (
+        <Container style={{ display: 'flex', backgroundColor: '#3F51B5', alignItems: 'center', justifyContent: 'space-around' }}>
+          <Button bordered block style={{backgroundColor: 'white'}} onPress={() => this.setState({ isAuthenticated: true })}>
+            <Text>войти</Text>
+          </Button>
+        </Container>
+      );
+    }
     return (
       <Provider store={store}>
         <Container >
@@ -42,6 +53,4 @@ export default class AwesomeApp extends Component {
       </Provider>
     );
   }
-
-
 }
