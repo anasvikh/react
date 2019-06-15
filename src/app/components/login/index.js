@@ -28,9 +28,12 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <Container>
-        <Content>
+        <Content style={{margin: 40}}>
           <Button  onPress={this.login} >
             <Text>ВХОД</Text>
+          </Button>
+          <Button  onPress={this.login} >
+            <Text>РЕГИСТРАЦИЯ</Text>
           </Button>
         </Content>
       </Container>

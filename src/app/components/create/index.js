@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Modal, TouchableHighlight } from 'react-native';
 import { Form, Item, Input, DatePicker, Text, Button, Title, Icon, Picker, View, Container, Header, Content, List, ListItem } from 'native-base';
 import randomColor from 'randomcolor';
 
@@ -27,7 +27,8 @@ export default class CreateScreen extends React.Component {
       { id: 10, name: 'Для детей', icon: 'md-happy', isChecked: false, tagId: '39' },
       { id: 11, name: 'Кино', icon: 'videocam', isChecked: false, tagId: '164' },
       { id: 12, name: 'Фото', icon: 'images', isChecked: false, tagId: '50' },],
-      cities: []
+      cities: [''],
+      modalVisible: false
     };
     this.setLocale = this.setLocale.bind(this);
     this.setDateFrom = this.setDateFrom.bind(this);
@@ -59,7 +60,18 @@ export default class CreateScreen extends React.Component {
   }
 
   onNextClick() {
-    this.props.navigation.navigate('EventsList', { eventsFilter });
+    url = 'https://localhost:44350/api/Cities/getCoord';
+    fetch(url)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        it.setState({
+          localeId: result.locales[0]._id
+        });
+      })
+      .catch(alert);
+    this.props.navigation.navigate('EventsList', { eventsFilter: this.state.eventsFilter });
   }
 
   setLocale(value) {
@@ -98,6 +110,7 @@ export default class CreateScreen extends React.Component {
     let index = newTags.findIndex(el => el.id === id);
     newTags[index].isChecked = !newTags[index].isChecked;
     this.setState({ tags: newTags });
+    console.log(this.state.tags);
   }
 
   onSubmit() {
@@ -106,7 +119,12 @@ export default class CreateScreen extends React.Component {
     var dateTo = this.state.dateTo;
     var tags = this.state.tags;
     var eventsFilter = { localeId, dateFrom, dateTo, tags };
-    this.props.navigation.navigate('Map', { cities: this.state.cities });
+    console.log(eventFilter);
+    this.props.navigation.navigate('Map', { eventsFilter });
+  }
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
   }
 
   render() {
@@ -114,34 +132,9 @@ export default class CreateScreen extends React.Component {
     return (
       <Container>
         <Content>
-          <Form style={{ margin: 15 }}>
-            <Text>Выберите место</Text>
-            {/* <Item> */}
-            <List>
-              {this.state.cities && this.state.cities.map((city, index) => (
-                <ListItem key={index} style={{ height: 50 }}>
-                  <Input value={city} onChangeText={(e) => this.cityChange(e, index)}></Input>
-                  <Button transparent primary onPress={() => this.cityRemove(index)}>
-                    <Icon name='close'></Icon>
-                  </Button>
-                </ListItem>
-              ))}
-            </List>
-            {/* <Input
-                placeholder="город"
-                placeholderTextColor="#d3d3d3"
-                onChangeText={this.setLocale}
-                onBlur={this.getLocaleId}
-              ></Input> */}
-            <Button onPress={(e) => this.addCity(e)} style={{ alignSelf: 'center' }}>
-              <Text>Добавить город</Text>
-            </Button>
-            <Button onPress={(e) => this.onNextClick(e)} style={{ alignSelf: 'center' }}>
-              <Text>Продолжить</Text>
-            </Button>
-            {/* </Item> */}
-            {/* <Text>Выберите время</Text>
-            <Item last>
+          <Form style={{ margin: 15, marginBottom: 100 }}>
+            <Text>Выберите даты</Text>
+            <Item style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
               <DatePicker
                 primary
                 defaultDate={currentDate}
@@ -161,6 +154,40 @@ export default class CreateScreen extends React.Component {
                 onDateChange={this.setDateTo}
               />
             </Item>
+
+                        <Text>Расскажите о своих интересах</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+              {this.state.tags.map((tag) => (<View style={{ alignItems: 'center' }} key={tag.id}>
+                <Button rounded
+                  style={{ width: 60, height: 60, margin: 5, justifyContent: 'center', backgroundColor: '#ffffff', borderWidth: 2, borderColor: randomColor({ luminosity: 'light', seed: tag.name }) }}
+                  onPress={this.setTag.bind(this, tag.id)}>
+                  <Icon name={tag.isChecked ? 'md-checkmark-circle' : tag.icon} style={{ fontSize: 24, color: randomColor({ luminosity: 'bright', seed: tag.name }) }} />
+                </Button>
+                <Text style={{ fontSize: 12 }} >{tag.name}</Text>
+              </View>))}
+            </View>
+            <Text>Выберите место</Text>
+            {/* <Item> */}
+            <List>
+              {this.state.cities && this.state.cities.map((city, index) => (
+                <ListItem key={index} style={{ height: 50 }}>
+                  <Input value={city} onChangeText={(e) => this.cityChange(e, index)}></Input>
+                  <Button transparent primary onPress={() => this.cityRemove(index)}>
+                    <Icon name='close'></Icon>
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+            {/* <Input
+                placeholder="город"
+                placeholderTextColor="#d3d3d3"
+                onChangeText={this.setLocale}
+                onBlur={this.getLocaleId}
+              ></Input> */}
+
+
+            {/* </Item> */}
+            {/* <Text>Выберите время</Text>
             <Text>Расскажите о своих интересах</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' }}>
               {this.state.tags.map((tag) => (<View style={{ alignItems: 'center' }} key={tag.id}>
@@ -176,7 +203,16 @@ export default class CreateScreen extends React.Component {
               <Text>Поиск мероприятий</Text>
             </Button> */}
           </Form>
+
         </Content>
+        <View style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row', position: 'absolute', bottom: 15, left: 20, flex: 1 }}>
+          <Button onPress={(e) => this.addCity(e)} style={{ marginRight: 30 }}>
+            <Text>Добавить город</Text>
+          </Button>
+          <Button onPress={(e) => this.onNextClick(e)}>
+            <Text>Продолжить</Text>
+          </Button>
+        </View>
       </Container>)
   }
 };

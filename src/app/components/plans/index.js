@@ -32,8 +32,9 @@ export default class EventsListScreen extends React.Component {
 
   componentDidMount() {
     this.props.navigation.setParams({ onNextButtonClick: this._onNextButtonClick });
-
-    if (this.state.eventsFilter) {
+    
+    if (this.state.eventsFilter == 2) {
+      console.log(this.state.eventsFilter);
       var tagsString = '';
       this.state.eventsFilter.tags.forEach(tag => {
         if (tag.isChecked && tag.tagId) tagsString += tag.tagId + ',';

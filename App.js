@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import Expo from "expo";
 import { Container, Content, Button } from 'native-base';
-import { StyleSheet, Text, View } from 'react-native';
-import { Header } from 'native-base';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import Navigator from './src/app/containers/Navigator';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './src/app/reducers';
 import { MODES } from './src/app/constants';
-import LoginScreen from "./src/app/components/login";
 
 const initialState = {
   mode: MODES.ARTICLES
@@ -38,10 +36,16 @@ export default class AwesomeApp extends Component {
     }
     if (this.state.isReady && !this.state.isAuthenticated) {
       return (
-        <Container style={{ display: 'flex', backgroundColor: '#3F51B5', alignItems: 'center', justifyContent: 'space-around' }}>
-          <Button bordered block style={{backgroundColor: 'white'}} onPress={() => this.setState({ isAuthenticated: true })}>
-            <Text>войти</Text>
-          </Button>
+        <Container style={{ display: 'flex', backgroundColor: '#3F51B5', alignItems: 'center', justifyContent: 'space-around', padding: 40 }}>
+          <Image source={require('./assets/ic2.png')} style={{ width: 250, height: 250 }} />
+          <View>
+            <Button bordered block style={{ backgroundColor: 'white', width: 250, margin: 10 }} onPress={() => this.setState({ isAuthenticated: true })}>
+              <Text>ВХОД</Text>
+            </Button>
+            <Button bordered block style={{ backgroundColor: 'white', width: 250, margin: 10 }} onPress={() => this.setState({ isAuthenticated: true })}>
+              <Text>РЕГИСТРАЦИЯ</Text>
+            </Button>
+          </View>
         </Container>
       );
     }

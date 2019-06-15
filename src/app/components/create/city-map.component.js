@@ -4,7 +4,7 @@ import { Text, Button, Title, Icon, Picker, View, Container, Header, Content, Ca
 import moment from 'moment';
 import { MapView } from 'expo';
 
-export default class MapScreen extends React.Component {
+export default class CityMapScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

@@ -1,23 +1,3 @@
-// import React from 'react';
-// import AppFooter from '../components/AppFooter.js';
-// import {connect} from 'react-redux';
-// import {setMode} from '../actions';
-// const mapStateToProps = (state) => ({
-// 	mode: state.mode
-// });
-// const mapDispatchToProps = (dispatch) => ({
-// 	setMode(mode) {
-// 		dispatch(setMode(mode));
-// 	}
-// });
-// const AppFooterContainer = ({mode, setMode}) => (
-// 	<AppFooter mode={mode} setMode={setMode} />
-// );
-// export default connect(
-// 	mapStateToProps,
-// 	mapDispatchToProps
-// )(AppFooterContainer);
-
 import React from 'react';
 import { Text, View, WebView } from 'react-native';
 import { Icon, Container, Button } from 'native-base';
@@ -109,7 +89,17 @@ var CreateScreenNavigator = createStackNavigator({
 	Map: {
 		screen: MapScreen,
 		navigationOptions: {
-			title: 'Мероприятия',
+			title: 'Составление маршрута',
+			headerStyle: {
+				backgroundColor: primaryColor,
+			},
+			headerTintColor: '#fff',
+		}
+	},
+	CityMap: {
+		screen: CityMapScreen,
+		navigationOptions: {
+			title: 'Составление маршрута',
 			headerStyle: {
 				backgroundColor: primaryColor,
 			},
