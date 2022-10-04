@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "expo": "^30.0.1",
+    "expo": "^46.0.14",
     "moment": "^2.22.2",
     "native-base": "^2.8.1",
     "randomcolor": "^0.5.3",
